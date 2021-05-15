@@ -12,19 +12,19 @@ import {
     ApiOperationGet,
 } from 'swagger-express-ts';
 import * as express from 'express';
-import { CarsService } from '../services/cars.service';
+import { ArtistsService } from '../services/artists.service';
 
 @ApiPath({
-    name: 'Cars',
-    path: '/cars/{id}',
+    name: 'Artists',
+    path: '/artists/{id}',
 })
-@controller('/cars/:id')
+@controller('/artists/:id')
 @injectable()
-export class CarController implements interfaces.Controller {
-    constructor(@inject(CarsService.name) private carsService: CarsService) {}
+export class ArtistController implements interfaces.Controller {
+    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) {}
 
     @ApiOperationGet({
-        description: 'Get car object',
+        description: 'Get artist object',
         parameters: {
             path: {
                 id: {
@@ -35,18 +35,18 @@ export class CarController implements interfaces.Controller {
         },
         responses: {
             200: {
-                model: 'Car',
+                model: 'Artist',
             },
             400: {},
         },
     })
     @httpGet('/')
-    public async getCar(
+    public async getArtist(
         @requestParam('id') id: string,
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
     ) {
-        response.json(await this.carsService.getCarById(id));
+        response.json(await this.artistsService.getArtistById(id));
     }
 }

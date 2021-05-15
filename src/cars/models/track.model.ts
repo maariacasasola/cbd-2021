@@ -1,28 +1,28 @@
+import { List } from 'lodash';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 @ApiModel({
-    description: 'Car description',
-    name: 'Car',
+    description: 'Track description',
+    name: 'Track',
 })
-export class CarModel {
+export class TrackModel {
     @ApiModelProperty({
-        description: 'Id of car',
+        description: 'Id of track',
         example: ['123456789', '12345'],
         required: true,
     })
     public _id: string;
 
     @ApiModelProperty({
-        description: '',
+        description: 'Title of track',
         required: true,
     })
-    public name: string;
+    public title: string;
 
     @ApiModelProperty({
-        description: 'Description of car',
+        description: 'YouTube URL of track',
         required: true,
     })
-    public description: string;
-
-    public _rev: string;
+    public url: string;
+    
 }
