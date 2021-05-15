@@ -7,14 +7,14 @@ import { couch } from '../../index'
 @injectable()
 export class ArtistsService {
 
-    private artistsList: ArtistModel[] = [
+    private artistsList: ArtistModel'' = [
         {
             description: 'Description Artist 1',
             _id: '1',
             _rev: '34',
             name: 'Artist 1',
-            genres: [],
-            tracks: [],
+            genres: '',
+            tracks: '',
             version: '1.0.0',
         } as ArtistModel,
         {
@@ -22,8 +22,8 @@ export class ArtistsService {
             _id: '2',
             _rev: '34',
             name: 'Artist 2',
-            genres: [],
-            tracks: [],
+            genres: '',
+            tracks: '',
             version: '2.0.0',
         } as ArtistModel,
     ];
@@ -37,7 +37,7 @@ export class ArtistsService {
         try {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
                 const res=JSON.parse(JSON.stringify(data));
-                const ret: ArtistModel[]=res.data.docs as ArtistModel[];
+                const ret: ArtistModel''=res.data.docs as ArtistModel'';
                 console.log(ret);
                 return ret;
             });
