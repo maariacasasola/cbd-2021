@@ -29,13 +29,13 @@ export class ArtistModel {
         description: 'Genres of artist',
         required: true,
     })
-    public genres: List<string>;
+    public genres: string[];
 
     @ApiModelProperty({
         description: 'Tracks of artist',
         required: true,
     })
-    public tracks: List<string>;
+    public tracks: string[];
 
     public _rev: string;
 }

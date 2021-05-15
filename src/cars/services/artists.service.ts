@@ -40,12 +40,18 @@ export class ArtistsService {
     // }
 
     async getArtistById(id: string) {
-        const artist = couch.get("cbd", id).then(
+        try{
+        const artist = await couch.get("cbd", id).then(
             (data: any) => {
                 let obj: ArtistModel = data.data;
                 return obj;
             }
-        );
+        ).catch(()=>{
+            console.log("")
+        });
         return artist;
+        }catch(error){
+
+        }
     }
 }

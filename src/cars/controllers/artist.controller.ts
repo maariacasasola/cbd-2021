@@ -35,7 +35,7 @@ export class ArtistController implements interfaces.Controller {
         },
         responses: {
             200: {
-                model: 'Artist',
+                description: 'Successful'
             },
             400: {},
         },
