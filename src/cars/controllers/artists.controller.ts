@@ -14,60 +14,60 @@ import {
     ApiPath,
     SwaggerDefinitionConstant,
 } from 'swagger-express-ts';
-import { CarModel } from '../models/car.model';
-import { CarsService } from '../services/cars.service';
+import { ArtistModel } from '../models/artist.model';
+import { ArtistsService } from '../services/artists.service';
 
 @ApiPath({
-    name: 'Cars',
-    path: '/cars',
+    name: 'Artists',
+    path: '/artists',
     security: { apiKeyHeader: [] },
 })
-@controller('/cars')
+@controller('/artists')
 @injectable()
-export class CarsController implements interfaces.Controller {
-    constructor(@inject(CarsService.name) private carsService: CarsService) {}
+export class ArtistsController implements interfaces.Controller {
+    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) {}
 
     @ApiOperationGet({
-        description: 'Get cars objects list',
+        description: 'Get artists objects list',
         responses: {
             200: {
-                model: 'Car',
+                model: 'Artist',
                 type: SwaggerDefinitionConstant.Response.Type.ARRAY,
             },
         },
         security: {
             apiKeyHeader: [],
         },
-        summary: 'Get cars list',
+        summary: 'Get artists list',
     })
     @httpGet('/')
-    public getCars(
+    public getArtists(
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
     ): void {
-        response.json(this.carsService.getCars());
+        response.json(this.artistsService.getArtists());
     }
 
     @ApiOperationPost({
-        description: 'Post car object',
+        description: 'Post artist object',
         parameters: {
             body: {
-                description: 'New car',
-                model: 'Car',
+                description: 'New artist',
+                model: 'Artist',
                 required: true,
             },
         },
         responses: {
             200: {
-                model: 'Car',
+                model: 'Artist',
             },
             400: { description: 'Parameters fail' },
         },
-        summary: 'Post new car',
+        summary: 'Post new artist',
     })
     @httpPost('/')
-    public postCar(
+    public postArtist(
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
@@ -75,11 +75,11 @@ export class CarsController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newCar = new CarModel();
-        newCar._id = request.body.id;
-        newCar.name = request.body.name;
-        newCar.description = request.body.description;
-        // this.carsService.addCar(request.body);
+        const newArtist = new ArtistModel();
+        newArtist._id = request.body.id;
+        newArtist.name = request.body.name;
+        newArtist.description = request.body.description;
+        // this.artistsService.addArtist(request.body);
         response.json(request.body);
     }
 }

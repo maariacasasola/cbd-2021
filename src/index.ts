@@ -8,9 +8,9 @@ import {
     TYPE,
 } from 'inversify-express-utils';
 import * as swagger from 'swagger-express-ts';
-import { CarsController } from './cars/controllers/cars.controller';
-import { CarController } from './cars/controllers/car.controller';
-import { CarsService } from './cars/services/cars.service';
+import { ArtistsController } from './cars/controllers/artists.controller';
+import { ArtistController } from './cars/controllers/artist.controller';
+import { ArtistsService } from './cars/services/artists.service';
 
 const NodeCouchdb = require('node-couchdb');
 
@@ -18,18 +18,18 @@ const NodeCouchdb = require('node-couchdb');
 const container = new Container();
 
 container
-    .bind<CarsService>(CarsService.name)
-    .to(CarsService)
+    .bind<ArtistsService>(ArtistsService.name)
+    .to(ArtistsService)
     .inSingletonScope();
 container
     .bind<interfaces.Controller>(TYPE.Controller)
-    .to(CarsController)
-    .whenTargetNamed(CarsController.name);
+    .to(ArtistController)
+    .whenTargetNamed(ArtistController.name);
 container
     .bind<interfaces.Controller>(TYPE.Controller)
-    .to(CarController)
+    .to(ArtistController)
     .inSingletonScope()
-    .whenTargetNamed(CarController.name);
+    .whenTargetNamed(ArtistController.name);
 
 // create server
 const server = new InversifyExpressServer(container);
