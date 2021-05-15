@@ -28,30 +28,45 @@ export class ArtistsService {
         } as ArtistModel,
     ];
 
-    // public getArtists() {
-    //     couch.get('cbd', '').then((data: any) => {
-    //         return data.data;
-    //     });
-    // }
+    async getArtists() {
+        const mangoQuery = {
+            selector: {
+            }
+        };
+        const parameters = {};
+        try {
+            const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+                const res=JSON.parse(JSON.stringify(data));
+                const ret: ArtistModel[]=res.data.docs as ArtistModel[];
+                console.log(ret);
+                return ret;
+            });
+            return res;
+            
+        } catch (error) {
 
-    // public addArtist(artist: ArtistModel): ArtistModel {
-    //     this.artistsList.push(artist);
-    //     return artist;
-    // }
+        }
+    }
+
+    public addArtist(artist: ArtistModel): ArtistModel {
+        this.artistsList.push(artist);
+        return artist;
+    }
 
     async getArtistById(id: string) {
-        try{
-        const artist = await couch.get("cbd", id).then(
-            (data: any) => {
-                let obj: ArtistModel = data.data;
-                return obj;
-            }
-        ).catch(()=>{
-            console.log("")
-        });
-        return artist;
-        }catch(error){
-            console.group(error)
+        try {
+            const artist = await couch.get("cbd", id).then(
+                (data: any) => {
+                    let obj: ArtistModel = data.data;
+                    console.log(obj)
+                    return obj;
+                }
+            ).catch(() => {
+                console.log("")
+            });
+            return artist;
+        } catch (error) {
+            console.log(error)
         }
     }
 }

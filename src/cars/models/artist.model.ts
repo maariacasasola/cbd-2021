@@ -8,7 +8,6 @@ import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 export class ArtistModel {
     @ApiModelProperty({
         description: 'Id of artist',
-        example: ['123456789', '12345'],
         required: true,
     })
     public _id: string;
@@ -28,14 +27,17 @@ export class ArtistModel {
     @ApiModelProperty({
         description: 'Genres of artist',
         required: true,
+        
     })
-    public genres: string[];
+    public genres: string;
 
     @ApiModelProperty({
         description: 'Tracks of artist',
         required: true,
     })
-    public tracks: string[];
-
+    public tracks: string;
+    @ApiModelProperty({
+        required: false,
+    })
     public _rev: string;
 }

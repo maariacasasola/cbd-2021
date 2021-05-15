@@ -27,59 +27,60 @@ import { ArtistsService } from '../services/artists.service';
 export class ArtistsController implements interfaces.Controller {
     constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) {}
 
-    // @ApiOperationGet({
-    //     description: 'Get artists objects list',
-    //     responses: {
-    //         200: {
-    //             model: 'Artist',
-    //             type: SwaggerDefinitionConstant.Response.Type.ARRAY,
-    //         },
-    //     },
-    //     security: {
-    //         apiKeyHeader: [],
-    //     },
-    //     summary: 'Get artists list',
-    // })
-    // @httpGet('/')
-    // public getArtists(
-    //     request: express.Request,
-    //     response: express.Response,
-    //     next: express.NextFunction
-    // ): void {
-    //     response.json(this.artistsService.getArtists());
-    // }
+    @ApiOperationGet({
+        description: 'Get all artist objects',
+        parameters: {},
+        responses: {
+            200: {
+                description: 'Successful'
+            },
+            400: {},
+        },
+    })
+    @httpGet('/')
+    public async getArtists(
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+    ) {
+        try {
+            response.json(await this.artistsService.getArtists());
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    // @ApiOperationPost({
-    //     description: 'Post artist object',
-    //     parameters: {
-    //         body: {
-    //             description: 'New artist',
-    //             model: 'Artist',
-    //             required: true,
-    //         },
-    //     },
-    //     responses: {
-    //         200: {
-    //             model: 'Artist',
-    //         },
-    //         400: { description: 'Parameters fail' },
-    //     },
-    //     summary: 'Post new artist',
-    // })
-    // @httpPost('/')
-    // public postArtist(
-    //     request: express.Request,
-    //     response: express.Response,
-    //     next: express.NextFunction
-    // ): void {
-    //     if (!request.body) {
-    //         return response.status(400).end();
-    //     }
-    //     const newArtist = new ArtistModel();
-    //     newArtist._id = request.body.id;
-    //     newArtist.name = request.body.name;
-    //     newArtist.description = request.body.description;
-    //     this.artistsService.addArtist(request.body);
-    //     response.json(request.body);
-    // }
+    @ApiOperationPost({
+        description: 'Post artist object',
+        parameters: {
+            body: {
+                description: 'New artist',
+                model: 'Artist',
+                required: true
+            },
+        },
+        responses: {
+            200: {
+                model: 'Artist',
+            },
+            400: { description: 'Parameters fail' },
+        },
+        summary: 'Post new artist',
+    })
+    @httpPost('/')
+    public postArtist(
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+    ): void {
+        if (!request.body) {
+            return response.status(400).end();
+        }
+        const newArtist = new ArtistModel();
+        newArtist._id = request.body.id;
+        newArtist.name = request.body.name;
+        newArtist.description = request.body.description;
+        this.artistsService.addArtist(request.body);
+        response.json(request.body);
+    }
 }
