@@ -27,9 +27,9 @@ container
     .whenTargetNamed(ArtistController.name);
 container
     .bind<interfaces.Controller>(TYPE.Controller)
-    .to(ArtistController)
+    .to(ArtistsController)
     .inSingletonScope()
-    .whenTargetNamed(ArtistController.name);
+    .whenTargetNamed(ArtistsController.name);
 
 // create server
 const server = new InversifyExpressServer(container);
@@ -77,7 +77,7 @@ const app = server.build();
 app.listen(3000);
 console.info('Server is listening on port : 3000');
 
-export const couch = new NodeCouchdb({
+export const couch =  new NodeCouchdb({
   auth: {
     user: "admin",
     password: "cbd",

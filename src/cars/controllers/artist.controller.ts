@@ -21,7 +21,7 @@ import { ArtistsService } from '../services/artists.service';
 @controller('/artists/:id')
 @injectable()
 export class ArtistController implements interfaces.Controller {
-    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) {}
+    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) { }
 
     @ApiOperationGet({
         description: 'Get artist object',
@@ -47,6 +47,10 @@ export class ArtistController implements interfaces.Controller {
         response: express.Response,
         next: express.NextFunction
     ) {
-        response.json(await this.artistsService.getArtistById(id));
+        try {
+            response.json(await this.artistsService.getArtistById(id));
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
