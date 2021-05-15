@@ -1,27 +1,21 @@
 {
-    "compileOnSave": true,
     "compilerOptions": {
-        "target": "es5",
-        "lib": ["es6", "dom"],
-        "types": [
-            "express",
-            "inversify",
-            "inversify-express-utils",
-            "reflect-metadata",
-            "mocha",
-            "sinon",
-            "lodash",
-            "chai"
-        ],
+        "target": "es6",
         "module": "commonjs",
-        "moduleResolution": "node",
-        "isolatedModules": false,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noImplicitAny": true,
-        "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "outDir": "built"
+        "outDir": "./dist",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ]
+        }
     },
-    "exclude": ["node_modules"]
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

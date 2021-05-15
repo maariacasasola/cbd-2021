@@ -1,0 +1,10 @@
+{
+    "_id": "_design/tracks",
+    "_rev": "",
+    "views": {
+      "trackById": {
+        "map": "function (doc) {\n  emit(doc._id, doc);\n}"
+      }
+    },
+    "language": "javascript"
+  }
