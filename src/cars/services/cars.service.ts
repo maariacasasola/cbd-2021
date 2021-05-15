@@ -35,7 +35,6 @@ export class CarsService {
     //     return car;
     // }
 
-
     async getCarById(id: string) {
         const car = couch.get("cbd", id).then(
             (data: any) => {
