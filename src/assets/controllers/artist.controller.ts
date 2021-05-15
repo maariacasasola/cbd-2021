@@ -13,6 +13,7 @@ import {
 } from 'swagger-express-ts';
 import * as express from 'express';
 import { ArtistsService } from '../services/artists.service';
+import { ArtistModel } from '../models/artist.model';
 
 @ApiPath({
     name: 'Artists',
