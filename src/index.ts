@@ -8,9 +8,9 @@ import {
     TYPE,
 } from 'inversify-express-utils';
 import * as swagger from 'swagger-express-ts';
-import { ArtistsController } from './cars/controllers/artists.controller';
-import { ArtistController } from './cars/controllers/artist.controller';
-import { ArtistsService } from './cars/services/artists.service';
+import { ArtistsController } from './artists/controllers/artists.controller';
+import { ArtistController } from './artists/controllers/artist.controller';
+import { ArtistsService } from './artists/services/artists.service';
 
 const NodeCouchdb = require('node-couchdb');
 
