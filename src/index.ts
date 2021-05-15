@@ -8,9 +8,13 @@ import {
     TYPE,
 } from 'inversify-express-utils';
 import * as swagger from 'swagger-express-ts';
-import { ArtistsController } from './cars/controllers/artists.controller';
-import { ArtistController } from './cars/controllers/artist.controller';
-import { ArtistsService } from './cars/services/artists.service';
+import { ArtistsController } from './assets/controllers/artists.controller';
+import { ArtistController } from './assets/controllers/artist.controller';
+import { ArtistsService } from './assets/services/artists.service';
+
+import { TracksController } from './assets/controllers/tracks.controller';
+import { TrackController } from './assets/controllers/track.controller';
+import { TracksService } from './assets/services/tracks.service';
 
 const NodeCouchdb = require('node-couchdb');
 
@@ -30,6 +34,20 @@ container
     .to(ArtistsController)
     .inSingletonScope()
     .whenTargetNamed(ArtistsController.name);
+
+container
+    .bind<TracksService>(TracksService.name)
+    .to(TracksService)
+    .inSingletonScope();
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(TrackController)
+    .whenTargetNamed(TrackController.name);
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(TracksController)
+    .inSingletonScope()
+    .whenTargetNamed(TracksController.name);
 
 // create server
 const server = new InversifyExpressServer(container);
