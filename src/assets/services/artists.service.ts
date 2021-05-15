@@ -28,11 +28,11 @@ export class ArtistsService {
         } as ArtistModel,
     ];
 
-    public getArtists() {
-        couch.get('cbd', '').then((data: any) => {
-            return data.data;
-        });
-    }
+    // public getArtists() {
+    //     couch.get('cbd', '').then((data: any) => {
+    //         return data.data;
+    //     });
+    // }
 
     // public addArtist(artist: ArtistModel): ArtistModel {
     //     this.artistsList.push(artist);
@@ -51,7 +51,7 @@ export class ArtistsService {
         });
         return artist;
         }catch(error){
-
+            console.group(error)
         }
     }
 }
