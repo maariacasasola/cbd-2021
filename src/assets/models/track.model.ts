@@ -8,7 +8,6 @@ import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 export class TrackModel {
     @ApiModelProperty({
         description: 'Id of track',
-        example: ['123456789', '12345'],
         required: true,
     })
     public _id: string;
@@ -25,4 +24,5 @@ export class TrackModel {
     })
     public url: string;
     
+    public _rev: string;
 }

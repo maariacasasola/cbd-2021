@@ -25,28 +25,29 @@ import { TracksService } from '../services/tracks.service';
 @controller('/tracks')
 @injectable()
 export class TracksController implements interfaces.Controller {
-    constructor(@inject(TracksService.name) private trackssService: TracksService) {}
+    constructor(@inject(TracksService.name) private tracksService: TracksService) {}
 
     @ApiOperationGet({
-        description: 'Get tracks objects list',
+        description: 'Get all tracks objects',
+        parameters: {},
         responses: {
             200: {
-                model: 'Track',
-                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+                description: 'Successful'
             },
+            400: {},
         },
-        security: {
-            apiKeyHeader: [],
-        },
-        summary: 'Get tracks list',
     })
     @httpGet('/')
-    public getTracks(
+    public async getTracks(
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
-    ): void {
-        response.json(this.trackssService.getTracks());
+    ) {
+        try {
+            response.json(await this.tracksService.getTracks());
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // @ApiOperationPost({
