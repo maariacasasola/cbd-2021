@@ -101,16 +101,3 @@ export const couch =  new NodeCouchdb({
     password: "cbd",
   },
 });
-
-// Borrar base de datos
-// couch.dropDatabase("cbd").then(
-//   () => {
-//     console.log("gola");
-//   }
-// );
-
-// couch.createDatabase("cbd").then(
-//   () => {
-//     console.log("gola");
-//   }
-// );

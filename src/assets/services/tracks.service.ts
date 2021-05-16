@@ -7,23 +7,6 @@ import { couch } from '../../index'
 @injectable()
 export class TracksService {
 
-    private tracksList: TrackModel[] = [
-        {
-            _id: '1',
-            _rev: '34',
-            title: 'Track 1',
-            url: '',
-            version: '1.0.0',
-        } as TrackModel,
-        {
-            _id: '2',
-            _rev: '34',
-            title: 'Track 2',
-            url: '',
-            version: '2.0.0',
-        } as TrackModel,
-    ];
-
     public async getTracks() {
         const mangoQuery = {
             selector: {
@@ -31,7 +14,7 @@ export class TracksService {
         };
         const parameters = {};
         try {
-            const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+            const res = await couch.mango('tracks', mangoQuery, parameters).then((data: any) => {
                 const res=JSON.parse(JSON.stringify(data));
                 const ret: TrackModel[]=res.data.docs as TrackModel[];
                 console.log(ret);
@@ -44,14 +27,9 @@ export class TracksService {
         }
     }
 
-    // public addArtist(artist: ArtistModel): ArtistModel {
-    //     this.artistsList.push(artist);
-    //     return artist;
-    // }
-
     async getTrackById(id: string) {
         try{
-        const artist = await couch.get("cbd", id).then(
+        const artist = await couch.get("tracks", id).then(
             (data: any) => {
                 let obj: TrackModel = data.data;
                 return obj;
