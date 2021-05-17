@@ -41,13 +41,9 @@ export class TracksService {
             
         } catch (error) {
             console.log(error)
+            return error.headers
         }
     }
-
-    // public addArtist(artist: ArtistModel): ArtistModel {
-    //     this.artistsList.push(artist);
-    //     return artist;
-    // }
 
     async getTrackById(id: string) {
         try{
@@ -61,7 +57,8 @@ export class TracksService {
         });
         return artist;
         }catch(error){
-
+            console.log("No existe una canción con el id " + id)
+            return error.headers
         }
     }
 }

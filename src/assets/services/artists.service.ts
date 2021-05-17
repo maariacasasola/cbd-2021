@@ -44,7 +44,7 @@ export class ArtistsService {
             return res;
             
         } catch (error) {
-
+            return error.headers
         }
     }
 
@@ -66,7 +66,8 @@ export class ArtistsService {
             });
             return artist;
         } catch (error) {
-            console.log(error)
+            console.log("No existe un artista con el id " + id)
+            return error.headers
         }
     }
 }
