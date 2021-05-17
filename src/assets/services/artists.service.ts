@@ -61,8 +61,9 @@ export class ArtistsService {
                     console.log(obj)
                     return obj;
                 }
-            ).catch(() => {
-                console.log("")
+            ).catch((error: Error)=>{
+                console.log("No existe un artista con el id " + id)
+                return error.message
             });
             return artist;
         } catch (error) {

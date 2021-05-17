@@ -2,7 +2,10 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { TrackModel } from '../models/track.model';
 import * as _ from 'lodash';
-var couch = require('../../couchdb/couchdb').use('tracks')
+import { couch } from '../../index'
+import { AssertionError } from 'chai';
+import { response } from 'express';
+import { requestHeaders } from 'inversify-express-utils';
 
 @injectable()
 export class TracksService {
@@ -41,7 +44,7 @@ export class TracksService {
             
         } catch (error) {
             console.log(error)
-            return error.headers
+            return error
         }
     }
 
@@ -52,13 +55,31 @@ export class TracksService {
                 let obj: TrackModel = data.data;
                 return obj;
             }
-        ).catch(()=>{
-            console.log("")
+        ).catch((error: Error)=>{
+            console.log("No existe una canción con el id " + id)
+            return error.message
         });
         return artist;
         }catch(error){
             console.log("No existe una canción con el id " + id)
-            return error.headers
+            return error
+        }
+    }
+
+    async addTrack(track: TrackModel) {
+        try{
+        await couch.inssert("cbd", track).then(
+            (data: any) => {
+                let obj: TrackModel = data.data;
+                return obj;
+            }
+        ).catch(((error: Error)=>{
+            return error.message
+        }));
+        return track;
+        }catch(error){
+            console.log("Error al crear la canción")
+            return error
         }
     }
 }

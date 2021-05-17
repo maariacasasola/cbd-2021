@@ -50,37 +50,36 @@ export class TracksController implements interfaces.Controller {
         }
     }
 
-    // @ApiOperationPost({
-    //     description: 'Post artist object',
-    //     parameters: {
-    //         body: {
-    //             description: 'New artist',
-    //             model: 'Artist',
-    //             required: true,
-    //         },
-    //     },
-    //     responses: {
-    //         200: {
-    //             model: 'Artist',
-    //         },
-    //         400: { description: 'Parameters fail' },
-    //     },
-    //     summary: 'Post new artist',
-    // })
-    // @httpPost('/')
-    // public postArtist(
-    //     request: express.Request,
-    //     response: express.Response,
-    //     next: express.NextFunction
-    // ): void {
-    //     if (!request.body) {
-    //         return response.status(400).end();
-    //     }
-    //     const newArtist = new ArtistModel();
-    //     newArtist._id = request.body.id;
-    //     newArtist.name = request.body.name;
-    //     newArtist.description = request.body.description;
-    //     this.artistsService.addArtist(request.body);
-    //     response.json(request.body);
-    // }
+    @ApiOperationPost({
+        description: 'Post track object',
+        parameters: {
+            body: {
+                description: 'New track',
+                model: 'Track',
+                required: true,
+            },
+        },
+        responses: {
+            200: {
+                model: 'Track',
+            },
+            400: { description: 'Parameters fail' },
+        },
+        summary: 'Post new track',
+    })
+    @httpPost('/')
+    public postTrack(
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+    ): void {
+        if (!request.body) {
+            return response.status(400).end();
+        }
+        const newTrack = new TrackModel();
+        newTrack.title = request.body.title;
+        newTrack.url = request.body.url;
+        this.tracksService.addTrack(request.body);
+        response.json(request.body);
+    }
 }
