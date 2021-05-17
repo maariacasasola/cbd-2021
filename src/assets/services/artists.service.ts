@@ -1,33 +1,10 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { ArtistModel } from '../models/artist.model';
-import * as _ from 'lodash';
 import { couch } from '../../index'
 
 @injectable()
 export class ArtistsService {
-
-    private artistsList: ArtistModel[] = [
-        {
-            description: 'Description Artist 1',
-            _id: '1',
-            _rev: '34',
-            name: 'Artist 1',
-            genres: '',
-            tracks: '',
-            version: '1.0.0',
-        } as ArtistModel,
-        {
-            description: 'Description Artists 2',
-            _id: '2',
-            _rev: '34',
-            name: 'Artist 2',
-            genres: '',
-            tracks: '',
-            version: '2.0.0',
-        } as ArtistModel,
-    ];
-
     async getArtists() {
         const mangoQuery = {
             selector: {
@@ -38,7 +15,6 @@ export class ArtistsService {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
                 const res = JSON.parse(JSON.stringify(data));
                 const ret: ArtistModel[] = res.data.docs as ArtistModel[];
-                console.log(ret);
                 return ret;
             });
             return res;
@@ -50,13 +26,13 @@ export class ArtistsService {
 
     async addArtist(artist: ArtistModel) {
         try {
-            await couch.insert("cbd", {
+            await couch.insert('cbd', {
                 name: artist.name,
                 description: artist.description,
                 genres: artist.genres,
                 tracks: artist.tracks
-            }).then((data:any) => {
-                console.log(data)
+            }).then((data: any) => {
+                console.log('Artist created correctly')
             });
         } catch (error) {
             console.log(error)
@@ -65,20 +41,48 @@ export class ArtistsService {
 
     async getArtistById(id: string) {
         try {
-            const artist = await couch.get("cbd", id).then(
+            const artist = await couch.get('cbd', id).then(
                 (data: any) => {
                     let obj: ArtistModel = data.data;
-                    console.log(obj)
                     return obj;
                 }
             ).catch((error: Error) => {
-                console.log("No existe un artista con el id " + id)
+                console.log('Artist with id ' + id + ' does not exist')
                 return error.message
             });
             return artist;
         } catch (error) {
-            console.log("No existe un artista con el id " + id)
+            console.log('Artist with id ' + id + ' does not exist')
             return error.headers
+        }
+    }
+
+    async updateArtist(id: string, artist_updated: ArtistModel) {
+        try {
+            const artist = await this.getArtistById(id);
+            await couch.update('cbd', {
+                _id: id,
+                _rev: artist._rev,
+                name: artist_updated.name,
+                description: artist_updated.description,
+                genres: artist_updated.genres,
+                tracks: artist_updated.tracks
+            }).then((data: any) => {
+                console.log('Artist updated correctly')
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async deleteArtist(id: string) {
+        try {
+            const artist = await this.getArtistById(id);
+            await couch.del('cbd', id, artist._rev).then((data: any) => {
+                console.log('Artist deleted correcly')
+            });
+        } catch (error) {
+            console.log(error)
         }
     }
 }

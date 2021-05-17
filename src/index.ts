@@ -73,6 +73,7 @@ server.setConfig((app: any) => {
                     500: {},
                 },
             },
+
         })
     );
 });
@@ -95,11 +96,11 @@ const app = server.build();
 app.listen(3000);
 console.info('Server is listening on port : 3000');
 
-export const couch =  new NodeCouchdb({
-  auth: {
-    user: "admin",
-    password: "cbd",
-  },
+export const couch = new NodeCouchdb({
+    auth: {
+        user: "admin",
+        password: "cbd",
+    },
 });
 
 // Borrar base de datos
