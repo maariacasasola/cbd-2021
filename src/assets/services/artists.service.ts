@@ -36,21 +36,31 @@ export class ArtistsService {
         const parameters = {};
         try {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
-                const res=JSON.parse(JSON.stringify(data));
-                const ret: ArtistModel[]=res.data.docs as ArtistModel[];
+                const res = JSON.parse(JSON.stringify(data));
+                const ret: ArtistModel[] = res.data.docs as ArtistModel[];
                 console.log(ret);
                 return ret;
             });
             return res;
-            
+
         } catch (error) {
             return error.headers
         }
     }
 
-    public addArtist(artist: ArtistModel): ArtistModel {
-        this.artistsList.push(artist);
-        return artist;
+    async addArtist(artist: ArtistModel) {
+        try {
+            await couch.insert("cbd", {
+                name: artist.name,
+                description: artist.description,
+                genres: artist.genres,
+                tracks: artist.tracks
+            }).then((data:any) => {
+                console.log(data)
+            });
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     async getArtistById(id: string) {
@@ -61,7 +71,7 @@ export class ArtistsService {
                     console.log(obj)
                     return obj;
                 }
-            ).catch((error: Error)=>{
+            ).catch((error: Error) => {
                 console.log("No existe un artista con el id " + id)
                 return error.message
             });

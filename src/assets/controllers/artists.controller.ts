@@ -76,10 +76,6 @@ export class ArtistsController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newArtist = new ArtistModel();
-        newArtist._id = request.body.id;
-        newArtist.name = request.body.name;
-        newArtist.description = request.body.description;
         this.artistsService.addArtist(request.body);
         response.json(request.body);
     }
