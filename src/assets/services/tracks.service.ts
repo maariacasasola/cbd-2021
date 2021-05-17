@@ -7,21 +7,61 @@ var couch = require('../../couchdb/couchdb').use('tracks')
 @injectable()
 export class TracksService {
 
-    async getTracks() {
-        const params = { include_docs: true, limit: 10, descending: true }
+    private tracksList: TrackModel[] = [
+        {
+            _id: '1',
+            _rev: '34',
+            title: 'Track 1',
+            url: '',
+            version: '1.0.0',
+        } as TrackModel,
+        {
+            _id: '2',
+            _rev: '34',
+            title: 'Track 2',
+            url: '',
+            version: '2.0.0',
+        } as TrackModel,
+    ];
+
+    public async getTracks() {
+        const mangoQuery = {
+            selector: {
+            }
+        };
+        const parameters = {};
         try {
-            return couch.list(params);
+            const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+                const res=JSON.parse(JSON.stringify(data));
+                const ret: TrackModel[]=res.data.docs as TrackModel[];
+                console.log(ret);
+                return ret;
+            });
+            return res;
+            
         } catch (error) {
             console.log(error)
         }
     }
 
+    // public addArtist(artist: ArtistModel): ArtistModel {
+    //     this.artistsList.push(artist);
+    //     return artist;
+    // }
+
     async getTrackById(id: string) {
-        try {
-            const doc = await couch.get(id);
-            return doc;
-        } catch (error) {
-            console.log("No existe una canción con el id: " + id)
+        try{
+        const artist = await couch.get("cbd", id).then(
+            (data: any) => {
+                let obj: TrackModel = data.data;
+                return obj;
+            }
+        ).catch(()=>{
+            console.log("")
+        });
+        return artist;
+        }catch(error){
+
         }
     }
 }
