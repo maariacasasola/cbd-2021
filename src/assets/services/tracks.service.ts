@@ -2,44 +2,26 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { TrackModel } from '../models/track.model';
 import * as _ from 'lodash';
-import { couch } from '../../index'
+var couch = require('../../couchdb/couchdb').use('tracks')
 
 @injectable()
 export class TracksService {
 
-    public async getTracks() {
-        const mangoQuery = {
-            selector: {
-            }
-        };
-        const parameters = {};
+    async getTracks() {
+        const params = { include_docs: true, limit: 10, descending: true }
         try {
-            const res = await couch.mango('tracks', mangoQuery, parameters).then((data: any) => {
-                const res=JSON.parse(JSON.stringify(data));
-                const ret: TrackModel[]=res.data.docs as TrackModel[];
-                console.log(ret);
-                return ret;
-            });
-            return res;
-            
+            return couch.list(params);
         } catch (error) {
-
+            console.log(error)
         }
     }
 
     async getTrackById(id: string) {
-        try{
-        const artist = await couch.get("tracks", id).then(
-            (data: any) => {
-                let obj: TrackModel = data.data;
-                return obj;
-            }
-        ).catch(()=>{
-            console.log("")
-        });
-        return artist;
-        }catch(error){
-
+        try {
+            const doc = await couch.get(id);
+            return doc;
+        } catch (error) {
+            console.log("No existe una canción con el id: " + id)
         }
     }
 }

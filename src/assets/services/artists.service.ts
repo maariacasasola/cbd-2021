@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { ArtistModel } from '../models/artist.model';
 import * as _ from 'lodash';
-import nano = require('nano');
 var couch = require('../../couchdb/couchdb').use('artists')
 
 @injectable()
@@ -26,12 +25,12 @@ export class ArtistsService {
         }
     }
 
-    // public addArtist(artist: ArtistModel): ArtistModel {
-    //     try {
-    //         const res = await couch.mango('artists', mangoQuery, parameters);
-    //         return artist;
-    //     }catch{
+    // public addArtist(artist: ArtistModel): {
+    //     // try {
+    //     //     const res = await couch.mango('artists', mangoQuery, parameters);
+    //     //     return artist;
+    //     // }catch{
 
-    //     }
+    //     // }
     // }
 }
