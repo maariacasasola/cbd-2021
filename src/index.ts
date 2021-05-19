@@ -15,10 +15,11 @@ import { ArtistsService } from './assets/services/artists.service';
 import { TracksController } from './assets/controllers/tracks.controller';
 import { TrackController } from './assets/controllers/track.controller';
 import { TracksService } from './assets/services/tracks.service';
-import { loadData } from './sample-data';
-import { ArrayIterator, List, ListOfRecursiveArraysOrValues } from 'lodash';
-import { createSandbox } from 'sinon';
-import { ArtistModel } from './assets/models/artist.model';
+import { ArtistTracksController } from './assets/controllers/artist-tracks.controller';
+import { GenresService } from './assets/services/genres.service';
+import { GenreController } from './assets/controllers/genre.controller';
+import { GenresController } from './assets/controllers/genres.controller';
+import { GenreArtistsController } from './assets/controllers/genre-artists.controller';
 
 const NodeCouchdb = require('node-couchdb');
 
@@ -44,6 +45,30 @@ container
     .to(ArtistsController)
     .inSingletonScope()
     .whenTargetNamed(ArtistsController.name);
+
+container
+    .bind<GenresService>(GenresService.name)
+    .to(GenresService)
+    .inSingletonScope();
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(GenresController)
+    .inSingletonScope()
+    .whenTargetNamed(GenresController.name);
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(GenreController)
+    .whenTargetNamed(GenreController.name);
+
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(ArtistTracksController)
+    .whenTargetNamed(ArtistTracksController.name);
+
+    container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(GenreArtistsController)
+    .whenTargetNamed(GenreArtistsController.name);
 
 container
     .bind<TracksService>(TracksService.name)

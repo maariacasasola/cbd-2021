@@ -1,14 +1,15 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import { ArtistModel } from '../models/artist.model';
+import { GenreModel } from '../models/genre.model';
 import { couch } from '../../index'
+import { ArtistModel } from '../models/artist.model';
 
 @injectable()
-export class ArtistsService {
-    async getArtists() {
+export class GenresService {
+    async getGenres() {
         const mangoQuery = {
             selector: {
-                type: 'Artist'
+                type: 'Genre'
             }
         };
         const parameters = {};
@@ -16,16 +17,16 @@ export class ArtistsService {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
                 const res = JSON.parse(JSON.stringify(data));
                 if (res) {
-                    const ret: ArtistModel[] = res.data.docs as ArtistModel[];
+                    const ret: GenreModel[] = res.data.docs as GenreModel[];
                     return ret;
                 } else {
-                    console.log('There are not any artists')
+                    console.log('There are not any genres')
                 }
             });
             if (res) {
                 return res;
             } else {
-                console.log('There are not any artists')
+                console.log('There are not any genres')
             }
         } catch (error) {
             console.log('An error has occurred')
@@ -33,16 +34,15 @@ export class ArtistsService {
         }
     }
 
-    async addArtist(artist: ArtistModel) {
+    async addGenre(genre: GenreModel) {
         try {
             await couch.insert('cbd', {
-                name: artist.name,
-                description: artist.description,
-                genres: artist.genres,
-                type: 'Artist'
+                name: genre.name,
+                description: genre.description,
+                type: 'Genre'
             }).then((status: any) => {
                 if (status.status === 201) {
-                    console.log('Artist created correctly')
+                    console.log('Genre created correctly')
                 }
             });
         } catch (error) {
@@ -50,25 +50,25 @@ export class ArtistsService {
         }
     }
 
-    async getArtistById(id: string) {
+    async getGenreById(id: string) {
         try {
-            const artist: ArtistModel = await couch.get('cbd', id).then(
+            const genre: GenreModel = await couch.get('cbd', id).then(
                 (data: any) => {
-                    let obj: ArtistModel = data.data;
-                    if (obj?.type === 'Artist') {
+                    let obj: GenreModel = data.data;
+                    if (obj?.type === 'Genre') {
                         return obj;
                     } else {
-                        console.log('Artist with id ' + id + ' does not exist')
+                        console.log('Genre with id ' + id + ' does not exist')
                     }
                 }
             ).catch((error: Error) => {
-                console.log('Artist with id ' + id + ' does not exist')
+                console.log('Genre with id ' + id + ' does not exist')
                 return error.message
             });
-            if (artist) {
-                return artist;
+            if (genre) {
+                return genre;
             } else {
-                console.log('Artist with id ' + id + ' does not exist')
+                console.log('Genre with id ' + id + ' does not exist')
             }
         } catch (error) {
             console.log('An error has occurred')
@@ -76,52 +76,50 @@ export class ArtistsService {
         }
     }
 
-    async updateArtist(id: string, artist_updated: ArtistModel) {
+    async updateGenre(id: string, genre_updated: GenreModel) {
         try {
-            const artist = await this.getArtistById(id);
-            if (artist && artist?.type === 'Artist') {
+            const genre = await this.getGenreById(id);
+            if (genre && genre?.type === 'Genre') {
                 await couch.update('cbd', {
                     _id: id,
-                    _rev: artist._rev,
-                    name: artist_updated.name,
-                    description: artist_updated.description,
-                    genres: artist_updated.genres,
-                    type: 'Artist'
+                    _rev: genre._rev,
+                    name: genre_updated.name,
+                    description: genre_updated.description,
+                    type: 'Genre'
                 }).then((status: any) => {
                     if (status.status === 201) {
-                        console.log('Artist created correctly')
+                        console.log('Genre created correctly')
                     }
                 });
             } else {
-                console.log('Artist with id ' + id + ' does not exist')
+                console.log('Genre with id ' + id + ' does not exist')
             }
         } catch (error) {
             console.log('An error has occurred')
         }
     }
 
-    async deleteArtist(id: string) {
+    async deleteGenre(id: string) {
         try {
-            const artist = await this.getArtistById(id);
-            if (artist && artist?.type === 'Artist') {
-                await couch.del('cbd', id, artist._rev).then((status: any) => {
+            const genre = await this.getGenreById(id);
+            if (genre && genre?.type === 'Genre') {
+                await couch.del('cbd', id, genre._rev).then((status: any) => {
                     if (status.status === 200) {
-                        console.log('Artist deleted correctly')
+                        console.log('Genre deleted correctly')
                     }
                 });
             } else {
-                console.log('Artist with id ' + id + ' does not exist')
+                console.log('Genre with id ' + id + ' does not exist')
             }
         } catch (error) {
             console.log('An error has occurred')
         }
     }
 
-    async getArtistTracks(artist_id: string) {
+    async getGenreArtists(genre_id: string) {
         const mangoQuery = {
             selector: {
-                type: 'Track',
-                artist: artist_id
+                type: 'Artist'
             }
         };
         const parameters = {};
@@ -130,15 +128,15 @@ export class ArtistsService {
                 const res = JSON.parse(JSON.stringify(data));
                 if (res) {
                     const ret: ArtistModel[] = res.data.docs as ArtistModel[];
-                    return ret;
+                    return ret.filter(artist=>artist?.genres.includes(genre_id));
                 } else {
-                    console.log('There are not any tracks for the artist with id ' + artist_id)
+                    console.log('There are not any artists for the genre with id ' + genre_id)
                 }
             });
             if (res) {
                 return res;
             } else {
-                console.log('There are not any tracks for the artist with id ' + artist_id)
+                console.log('There are not any artists for the genre with id ' + genre_id)
             }
         } catch (error) {
             console.log('An error has occurred')
