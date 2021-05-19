@@ -1,6 +1,5 @@
 import { List } from 'lodash';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import { TrackModel } from './track.model';
 
 @ApiModel({
     description: 'Artist description',
@@ -28,10 +27,5 @@ export class ArtistModel {
     })
     public genres: List<string>;
 
-    @ApiModelProperty({
-        description: 'Tracks of artist',
-        required: true,
-        example: "[\"Work\",\"Man Down\"]"
-    })
-    public tracks: List<TrackModel>;
+    public type: string;
 }
