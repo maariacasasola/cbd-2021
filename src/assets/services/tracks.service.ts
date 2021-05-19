@@ -73,8 +73,6 @@ export class TracksService {
         try {
             const track: TrackModel = await this.getTrackById(id);
             await couch.update("cbd", {
-                _id: id,
-                _rev: track._rev,
                 name: track_updated.title,
                 url: track_updated.url
             }).then((data:any) => {
