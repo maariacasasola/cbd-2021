@@ -25,7 +25,7 @@ import { ArtistsService } from '../services/artists.service';
 @controller('/artists')
 @injectable()
 export class ArtistsController implements interfaces.Controller {
-    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) {}
+    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) { }
 
     @ApiOperationGet({
         description: 'Get all artist objects',
@@ -55,29 +55,29 @@ export class ArtistsController implements interfaces.Controller {
         parameters: {
             body: {
                 description: 'New artist',
-                model: 'Artist',
-                required: true
+                required: true,
+                model: 'Artist'
             },
         },
         responses: {
             200: {
-                description: 'successful',
+                description: 'Successful',
             },
             400: { description: 'Parameters fail' },
         },
         summary: 'Post new artist',
     })
     @httpPost('/')
-    public postArtist(
+    async postArtist(
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
-    ): void {
+    ) {
         if (!request.body) {
             return response.status(400).end();
         }
-        const a = new ArtistModel();
-        this.artistsService.addArtist(request.body);
+        const newArtist = new ArtistModel();
+        await this.artistsService.addArtist(request.body);
         response.json(request.body);
     }
 }
