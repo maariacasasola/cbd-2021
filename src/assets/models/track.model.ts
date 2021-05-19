@@ -6,11 +6,6 @@ import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
     name: 'Track',
 })
 export class TrackModel {
-    @ApiModelProperty({
-        description: 'Id of track',
-        required: true,
-    })
-    public _id: string;
 
     @ApiModelProperty({
         description: 'Title of track',
@@ -25,6 +20,5 @@ export class TrackModel {
         example: "Tracks's YouTube URL"
     })
     public url: string;
-    
-    public _rev: string;
+
 }
