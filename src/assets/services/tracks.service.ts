@@ -62,6 +62,7 @@ export class TracksService {
             await couch.insert("cbd", {
                 title: track.title,
                 url: track.url,
+                artist: track.artist,
                 type: 'Track'
             }).then(
                 (data: any) => {
@@ -85,6 +86,7 @@ export class TracksService {
                     _rev: track._rev,
                     title: track_updated.title,
                     url: track_updated.url,
+                    artist: track_updated.artist,
                     type: 'Track'
                 }).then((status: any) => {
                     if (status.status === 201) {
