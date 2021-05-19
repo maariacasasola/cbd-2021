@@ -15,9 +15,19 @@ import { ArtistsService } from './assets/services/artists.service';
 import { TracksController } from './assets/controllers/tracks.controller';
 import { TrackController } from './assets/controllers/track.controller';
 import { TracksService } from './assets/services/tracks.service';
+import { loadData } from './sample-data';
+import { ArrayIterator, List, ListOfRecursiveArraysOrValues } from 'lodash';
+import { createSandbox } from 'sinon';
+import { ArtistModel } from './assets/models/artist.model';
 
 const NodeCouchdb = require('node-couchdb');
 
+export const couch = new NodeCouchdb({
+    auth: {
+        user: "admin",
+        password: "cbd",
+    },
+});
 
 const container = new Container();
 
@@ -96,22 +106,74 @@ const app = server.build();
 app.listen(3000);
 console.info('Server is listening on port : 3000');
 
-export const couch = new NodeCouchdb({
-    auth: {
-        user: "admin",
-        password: "cbd",
-    },
-});
+async function getArtistId(name: string) {
+    const mangoQuery = {
+        selector: {
+            type: 'Artist',
+            name: name
+        }
+    };
+    const parameters = {};
+    try {
+        const artists = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+            const res = JSON.parse(JSON.stringify(data));
+            console.log(res.data.docs[0]._id)
+            if (res) {
+                return res.data.docs[0]._id;
+            } else {
+                return 'No artist data';
+            }
+        }
+        );
+    } catch {
+        console.log('An error has occurred retrieving data')
+    }
+}
 
-// Borrar base de datos
-// couch.dropDatabase("cbd").then(
-//   () => {
-//     console.log("gola");
-//   }
-// );
 
-// couch.createDatabase("cbd").then(
-//   () => {
-//     console.log("gola");
-//   }
-// );
+couch.dropDatabase('cbd').then(
+    () => {
+        console.log("Database dropped");
+        couch.createDatabase("cbd").then(
+            async () => {
+                console.log("Database created");
+                await couch.insert('cbd', {
+                    name: 'Rihanna',
+                    description: 'Singer, businesswoman, fashion designer, actress, diplomat, writer, dancer and philanthropist.',
+                    genres: '[\"Pop\",\"R&B\", \"Reggae\", \"Techno\"]',
+                    type: 'Artist'
+                });
+
+                await couch.insert('cbd', {
+                    name: 'La Oreja de Van Gogh',
+                    description: 'Musical group of pop-rock genre from San Sebastián, País Vasco, Spain.',
+                    genres: '[\"Pop\",\"Rock\"]',
+                    type: 'Artist'
+                });
+
+                await couch.insert('cbd', {
+                    name: 'Estopa',
+                    description: 'Spanish duo of Catalan rumba formed by the brothers David and José Manuel Muñoz.',
+                    genres: '[\"Pop rock\", \"Rumba catalana\"]',
+                    type: 'Artist'
+                });
+
+                await couch.insert('cbd', {
+                    name: 'Eminem',
+                    description: 'American rapper, singer, record producer and actor.',
+                    genres: '[\"Rap\", \"Hip Hop\", \"Trap\"]',
+                    type: 'Artist'
+                });
+
+                // await couch.insert("cbd", {
+                //     title: 'Man down',
+                //     url: 'https://www.youtube.com/watch?v=sEhy-RXkNo0',
+                //     artist: await getArtistId('Rihanna'),
+                //     type: 'Track'
+                // });
+            }
+        );
+    }
+);
+
+
