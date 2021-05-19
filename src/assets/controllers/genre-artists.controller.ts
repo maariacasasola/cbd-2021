@@ -5,30 +5,26 @@ import {
     controller,
     httpGet,
     requestParam,
-    httpPut,
-    httpDelete,
 } from 'inversify-express-utils';
 import {
     ApiPath,
     SwaggerDefinitionConstant,
     ApiOperationGet,
-    ApiOperationPut,
-    ApiOperationDelete,
 } from 'swagger-express-ts';
 import * as express from 'express';
-import { ArtistsService } from '../services/artists.service';
+import { GenresService } from '../services/genres.service';
 
 @ApiPath({
-    name: 'Artist Tracks',
-    path: '/tracks/artist/{id}',
+    name: 'Genre Artists',
+    path: '/artists/genre/{id}',
 })
-@controller('/tracks/artist/:id')
+@controller('/artists/genre/:id')
 @injectable()
-export class ArtistTracksController implements interfaces.Controller {
-    constructor(@inject(ArtistsService.name) private artistsService: ArtistsService) { }
+export class GenreArtistsController implements interfaces.Controller {
+    constructor(@inject(GenresService.name) private genresService: GenresService) { }
 
     @ApiOperationGet({
-        description: 'Get artist tracks objects',
+        description: 'Get genre tracks objects',
         parameters: {
             path: {
                 id: {
@@ -45,14 +41,14 @@ export class ArtistTracksController implements interfaces.Controller {
         },
     })
     @httpGet('/')
-    public async getArtistTracks(
+    public async getGenreArtists(
         @requestParam('id') id: string,
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.artistsService.getArtistTracks(id));
+            response.json(await this.genresService.getGenreArtists(id));
         } catch (error) {
             console.log(error);
         }
