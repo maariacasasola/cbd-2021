@@ -5,17 +5,13 @@ import {
     controller,
     httpGet,
     httpPost,
-    httpPut,
-    interfaces,
-    requestParam
+    interfaces
 } from 'inversify-express-utils';
 import 'reflect-metadata';
 import {
     ApiOperationGet,
     ApiOperationPost,
-    ApiOperationPut,
-    ApiPath,
-    SwaggerDefinitionConstant,
+    ApiPath
 } from 'swagger-express-ts';
 import { TrackModel } from '../models/track.model';
 import { TracksService } from '../services/tracks.service';
@@ -65,7 +61,7 @@ export class TracksController implements interfaces.Controller {
         },
         responses: {
             200: {
-                description: 'successful',
+                description: 'Successful',
             },
             400: { description: 'Parameters fail' },
         },
@@ -80,7 +76,7 @@ export class TracksController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const t = new TrackModel();
+        const newTrack = new TrackModel();
         await this.tracksService.addTrack(request.body);
         response.json(request.body);
     }

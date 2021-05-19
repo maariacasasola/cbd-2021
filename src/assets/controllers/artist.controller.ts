@@ -43,6 +43,7 @@ export class ArtistController implements interfaces.Controller {
             },
             400: { description: 'Parameters fail' },
         },
+        summary: 'Get a artist by id'
     })
     @httpGet('/')
     public async getArtist(

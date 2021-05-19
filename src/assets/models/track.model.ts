@@ -10,15 +10,23 @@ export class TrackModel {
     @ApiModelProperty({
         description: 'Title of track',
         required: true,
-        example: 'Track title',
+        example: 'Men down',
     })
     public title: string;
 
     @ApiModelProperty({
         description: 'YouTube URL of track',
         required: true,
-        example: "Tracks's YouTube URL"
+        example: "https://www.youtube.com/watch?v=CUYrEiym"
     })
     public url: string;
 
+    @ApiModelProperty({
+        description: "Track's artist id",
+        required: true,
+        example: "9408e8d54490f6b8852bc0ef7d00XXXX"
+    })
+    public artist: string;
+
+    public type: string;
 }
