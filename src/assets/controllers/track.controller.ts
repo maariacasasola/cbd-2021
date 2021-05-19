@@ -41,9 +41,9 @@ export class TrackController implements interfaces.Controller {
             200: {
                 description: 'Successful'
             },
-            400: {},
+            400: {  description: 'Parameters fail' },
         },
-        summary: 'Get a track by id',
+        summary: 'Get a track by id'
     })
     @httpGet('/')
     public async getTrack(
@@ -52,7 +52,11 @@ export class TrackController implements interfaces.Controller {
         response: express.Response,
         next: express.NextFunction
     ) {
-        response.json(await this.tracksService.getTrackById(id));
+        try {
+            response.json(await this.tracksService.getTrackById(id));
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     @ApiOperationPut({

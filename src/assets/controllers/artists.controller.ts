@@ -12,7 +12,6 @@ import {
     ApiOperationGet,
     ApiOperationPost,
     ApiPath,
-    SwaggerDefinitionConstant,
 } from 'swagger-express-ts';
 import { ArtistModel } from '../models/artist.model';
 import { ArtistsService } from '../services/artists.service';
@@ -36,6 +35,7 @@ export class ArtistsController implements interfaces.Controller {
             },
             400: {},
         },
+        summary: 'Get all artists',
     })
     @httpGet('/')
     public async getArtists(
