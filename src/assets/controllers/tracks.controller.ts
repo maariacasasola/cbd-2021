@@ -5,12 +5,15 @@ import {
     controller,
     httpGet,
     httpPost,
+    httpPut,
     interfaces,
+    requestParam
 } from 'inversify-express-utils';
 import 'reflect-metadata';
 import {
     ApiOperationGet,
     ApiOperationPost,
+    ApiOperationPut,
     ApiPath,
     SwaggerDefinitionConstant,
 } from 'swagger-express-ts';
@@ -25,7 +28,7 @@ import { TracksService } from '../services/tracks.service';
 @controller('/tracks')
 @injectable()
 export class TracksController implements interfaces.Controller {
-    constructor(@inject(TracksService.name) private tracksService: TracksService) {}
+    constructor(@inject(TracksService.name) private tracksService: TracksService) { }
 
     @ApiOperationGet({
         description: 'Get all tracks objects',
@@ -36,6 +39,7 @@ export class TracksController implements interfaces.Controller {
             },
             400: {},
         },
+        summary: 'Get all tracks',
     })
     @httpGet('/')
     public async getTracks(
@@ -61,25 +65,25 @@ export class TracksController implements interfaces.Controller {
         },
         responses: {
             200: {
-                model: 'Track',
+                description: 'successful',
             },
             400: { description: 'Parameters fail' },
         },
         summary: 'Post new track',
     })
     @httpPost('/')
-    public postTrack(
+    async postTrack(
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
-    ): void {
+    ) {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newTrack = new TrackModel();
-        newTrack.title = request.body.title;
-        newTrack.url = request.body.url;
-        this.tracksService.addTrack(request.body);
+        const t = new TrackModel();
+        await this.tracksService.addTrack(request.body);
         response.json(request.body);
     }
 }
+
+
