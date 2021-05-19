@@ -116,4 +116,33 @@ export class ArtistsService {
             console.log('An error has occurred')
         }
     }
+
+    async getArtistTracks(artist_id: string) {
+        const mangoQuery = {
+            selector: {
+                type: 'Track',
+                artist: artist_id
+            }
+        };
+        const parameters = {};
+        try {
+            const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+                const res = JSON.parse(JSON.stringify(data));
+                if (res) {
+                    const ret: ArtistModel[] = res.data.docs as ArtistModel[];
+                    return ret;
+                } else {
+                    console.log('There are not any tracks for the artist with id ' + artist_id)
+                }
+            });
+            if (res) {
+                return res;
+            } else {
+                console.log('There are not any tracks for the artist with id ' + artist_id)
+            }
+        } catch (error) {
+            console.log('An error has occurred')
+            return error.headers
+        }
+    }
 }

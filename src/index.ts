@@ -15,6 +15,7 @@ import { ArtistsService } from './assets/services/artists.service';
 import { TracksController } from './assets/controllers/tracks.controller';
 import { TrackController } from './assets/controllers/track.controller';
 import { TracksService } from './assets/services/tracks.service';
+import { ArtistTracksController } from './assets/controllers/artist-tracks.controller';
 
 const NodeCouchdb = require('node-couchdb');
 
@@ -29,6 +30,10 @@ container
     .bind<interfaces.Controller>(TYPE.Controller)
     .to(ArtistController)
     .whenTargetNamed(ArtistController.name);
+container
+    .bind<interfaces.Controller>(TYPE.Controller)
+    .to(ArtistTracksController)
+    .whenTargetNamed(ArtistTracksController.name);
 container
     .bind<interfaces.Controller>(TYPE.Controller)
     .to(ArtistsController)
