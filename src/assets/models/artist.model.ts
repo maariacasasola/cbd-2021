@@ -15,18 +15,21 @@ export class ArtistModel {
     @ApiModelProperty({
         description: 'Name of artist',
         required: true,
+        example: 'Artist name'
     })
     public name: string;
 
     @ApiModelProperty({
         description: 'Description of artist',
         required: true,
+        example: 'Description of the artist'
     })
     public description: string;
 
     @ApiModelProperty({
         description: 'Genres of artist',
         required: true,
+        example: 'List of artist genres'
         
     })
     public genres: string;

@@ -10,23 +10,6 @@ import { requestHeaders } from 'inversify-express-utils';
 @injectable()
 export class TracksService {
 
-    private tracksList: TrackModel[] = [
-        {
-            _id: '1',
-            _rev: '34',
-            title: 'Track 1',
-            url: '',
-            version: '1.0.0',
-        } as TrackModel,
-        {
-            _id: '2',
-            _rev: '34',
-            title: 'Track 2',
-            url: '',
-            version: '2.0.0',
-        } as TrackModel,
-    ];
-
     public async getTracks() {
         const mangoQuery = {
             selector: {
@@ -35,13 +18,15 @@ export class TracksService {
         const parameters = {};
         try {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
-                const res=JSON.parse(JSON.stringify(data));
-                const ret: TrackModel[]=res.data.docs as TrackModel[];
+                const res = JSON.parse(JSON.stringify(data));
+                const ret: TrackModel[] = res.data.docs as TrackModel[];
                 console.log(ret);
                 return ret;
-            });
+            }).catch(((error: Error) => {
+                return error.message
+            }));
             return res;
-            
+
         } catch (error) {
             console.log(error)
             return error
@@ -49,37 +34,54 @@ export class TracksService {
     }
 
     async getTrackById(id: string) {
-        try{
-        const artist = await couch.get("cbd", id).then(
-            (data: any) => {
-                let obj: TrackModel = data.data;
-                return obj;
-            }
-        ).catch((error: Error)=>{
-            console.log("No existe una canción con el id " + id)
-            return error.message
-        });
-        return artist;
-        }catch(error){
+        try {
+            const artist = await couch.get("cbd", id).then(
+                (data: any) => {
+                    let obj: TrackModel = data.data;
+                    return obj;
+                }
+            ).catch((error: Error) => {
+                console.log("No existe una canción con el id " + id)
+                return error.message
+            });
+            return artist;
+        } catch (error) {
             console.log("No existe una canción con el id " + id)
             return error
         }
     }
 
     async addTrack(track: TrackModel) {
-        try{
-        await couch.inssert("cbd", track).then(
-            (data: any) => {
-                let obj: TrackModel = data.data;
-                return obj;
-            }
-        ).catch(((error: Error)=>{
-            return error.message
-        }));
-        return track;
-        }catch(error){
+        try {
+            await couch.insert("cbd", {
+                title: track.title,
+                url: track.url
+            }).then(
+                (data: any) => {
+                    console.log(data)
+                }
+            ).catch(((error: Error) => {
+                return error.message
+            }));
+        } catch (error) {
             console.log("Error al crear la canción")
-            return error
+            console.log(error)
+        }
+    }
+
+    async updateTrack(id:string, track_updated: TrackModel){
+        try {
+            const track: TrackModel = await this.getTrackById(id);
+            await couch.update("cbd", {
+                _id: id,
+                _rev: track._rev,
+                name: track_updated.title,
+                description: track_updated.url
+            }).then((data:any) => {
+                console.log(data)
+            });
+        } catch (error) {
+            console.log(error)
         }
     }
 }

@@ -61,7 +61,7 @@ export class ArtistsController implements interfaces.Controller {
         },
         responses: {
             200: {
-                model: 'Artist',
+                description: 'successful',
             },
             400: { description: 'Parameters fail' },
         },
@@ -76,6 +76,7 @@ export class ArtistsController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
+        const a = new ArtistModel();
         this.artistsService.addArtist(request.body);
         response.json(request.body);
     }

@@ -55,10 +55,13 @@ export class ArtistsService {
                 description: artist.description,
                 genres: artist.genres,
                 tracks: artist.tracks
-            }).then((data:any) => {
+            }).then((data: any) => {
                 console.log(data)
-            });
+            }).catch(((error: Error) => {
+                return error.message
+            }));
         } catch (error) {
+            console.log("Error al crear el artista")
             console.log(error)
         }
     }
