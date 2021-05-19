@@ -76,9 +76,21 @@ export class TracksService {
                 _id: id,
                 _rev: track._rev,
                 name: track_updated.title,
-                description: track_updated.url
+                url: track_updated.url
             }).then((data:any) => {
+                console.log('Track updated correctly')
                 console.log(data)
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async deleteTrack(id: string) {
+        try {
+            const track = await this.getTrackById(id);
+            await couch.del('cbd', id, track._rev).then((data: any) => {
+                console.log('Track deleted correcly')
             });
         } catch (error) {
             console.log(error)

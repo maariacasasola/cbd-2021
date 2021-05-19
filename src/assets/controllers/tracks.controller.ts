@@ -39,6 +39,7 @@ export class TracksController implements interfaces.Controller {
             },
             400: {},
         },
+        summary: 'Get all tracks',
     })
     @httpGet('/')
     public async getTracks(
@@ -82,45 +83,6 @@ export class TracksController implements interfaces.Controller {
         const t = new TrackModel();
         await this.tracksService.addTrack(request.body);
         response.json(request.body);
-    }
-
-    @ApiOperationPut({
-        description: 'Update track object',
-        parameters: {
-            path: {
-                id: {
-                    required: true,
-                    type: SwaggerDefinitionConstant.Parameter.Type.STRING,
-                },
-            },
-            body: {
-                description: 'Update track',
-                required: true,
-                model: 'Track'
-            }
-        },
-        responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
-        },
-        summary: 'Update track'
-    })
-    @httpPut('/')
-    public async updateTrack(@requestParam('id') id: string,
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction) {
-        try {
-            if (!request.body) {
-                return response.status(400).end();
-            }
-            console.log("hola")
-            response.json(await this.tracksService.updateTrack(id, request.body));
-        } catch (error) {
-            console.log(error);
-        }
     }
 }
 
