@@ -16,37 +16,37 @@ export class GenresService {
         try {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
                 const res = JSON.parse(JSON.stringify(data));
-                if (res) {
-                    const ret: GenreModel[] = res.data.docs as GenreModel[];
+                if (res?.data?.docs) {
+                    const ret: GenreModel[] = res?.data?.docs as GenreModel[];
                     return ret;
                 } else {
-                    console.log('There are not any genres')
+                    return 'There are not any genres';
                 }
             });
-            if (res) {
+            if (res.length !== 0) {
                 return res;
             } else {
-                console.log('There are not any genres')
+                return 'There are not any genres';
             }
         } catch (error) {
-            console.log('An error has occurred')
-            return error.headers
+            return 'An error has occurred';
         }
     }
 
     async addGenre(genre: GenreModel) {
         try {
-            await couch.insert('cbd', {
-                name: genre.name,
-                description: genre.description,
+            const newGenre = await couch.insert('cbd', {
+                name: genre?.name,
+                description: genre?.description,
                 type: 'Genre'
             }).then((status: any) => {
                 if (status.status === 201) {
-                    console.log('Genre created correctly')
+                    return 'Genre created correctly';
                 }
             });
+            return newGenre;
         } catch (error) {
-            console.log('An error has occurred')
+            return 'An error has occurred';
         }
     }
 
@@ -54,25 +54,23 @@ export class GenresService {
         try {
             const genre: GenreModel = await couch.get('cbd', id).then(
                 (data: any) => {
-                    let obj: GenreModel = data.data;
+                    let obj: GenreModel = data?.data;
                     if (obj?.type === 'Genre') {
                         return obj;
                     } else {
-                        console.log('Genre with id ' + id + ' does not exist')
+                        return 'Genre with id ' + id + ' does not exist';
                     }
                 }
             ).catch((error: Error) => {
-                console.log('Genre with id ' + id + ' does not exist')
-                return error.message
+                return 'Genre with id ' + id + ' does not exist';
             });
             if (genre) {
                 return genre;
             } else {
-                console.log('Genre with id ' + id + ' does not exist')
+                return 'Genre with id ' + id + ' does not exist';
             }
         } catch (error) {
-            console.log('An error has occurred')
-            return error.headers
+            return error?.headers;
         }
     }
 
@@ -80,22 +78,23 @@ export class GenresService {
         try {
             const genre = await this.getGenreById(id);
             if (genre && genre?.type === 'Genre') {
-                await couch.update('cbd', {
+                const updated = await couch.update('cbd', {
                     _id: id,
-                    _rev: genre._rev,
-                    name: genre_updated.name,
-                    description: genre_updated.description,
+                    _rev: genre?._rev,
+                    name: genre_updated?.name,
+                    description: genre_updated?.description,
                     type: 'Genre'
                 }).then((status: any) => {
                     if (status.status === 201) {
-                        console.log('Genre created correctly')
+                        return 'Genre updated correctly';
                     }
                 });
+                return updated;
             } else {
-                console.log('Genre with id ' + id + ' does not exist')
+                return 'Genre with id ' + id + ' does not exist';
             }
         } catch (error) {
-            console.log('An error has occurred')
+            return 'An error has occurred';
         }
     }
 
@@ -103,16 +102,17 @@ export class GenresService {
         try {
             const genre = await this.getGenreById(id);
             if (genre && genre?.type === 'Genre') {
-                await couch.del('cbd', id, genre._rev).then((status: any) => {
-                    if (status.status === 200) {
-                        console.log('Genre deleted correctly')
+                const e = await couch.del('cbd', id, genre?._rev).then((status: any) => {
+                    if (status?.status === 200) {
+                        return 'Genre deleted correctly';
                     }
                 });
+                return genre;
             } else {
-                console.log('Genre with id ' + id + ' does not exist')
+                return 'Genre with id ' + id + ' does not exist';
             }
         } catch (error) {
-            console.log('An error has occurred')
+            return 'An error has occurred';
         }
     }
 
@@ -124,23 +124,29 @@ export class GenresService {
         };
         const parameters = {};
         try {
-            const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
-                const res = JSON.parse(JSON.stringify(data));
-                if (res) {
-                    const ret: ArtistModel[] = res.data.docs as ArtistModel[];
-                    return ret.filter(artist=>artist?.genres.includes(genre_id));
+            const genre = await this.getGenreById(genre_id);
+            if (genre && genre?.type === 'Genre') {
+                const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
+                    const res = JSON.parse(JSON.stringify(data));
+                    console.log(res)
+                    if (res?.data?.docs) {
+                        const ret: ArtistModel[] = res?.data?.docs as ArtistModel[];
+                        return ret.filter(artist=>artist?.genres.includes(genre_id));
+                    } else {
+                        return 'There are not any artists for the genre with id ' + genre_id;
+                    }
+                });
+                if (res.length !== 0) {
+                    return res;
                 } else {
-                    console.log('There are not any artists for the genre with id ' + genre_id)
+                    console.log('2')
+                    return 'There are not any artists for the genre with id ' + genre_id;
                 }
-            });
-            if (res) {
-                return res;
             } else {
-                console.log('There are not any artists for the genre with id ' + genre_id)
+                return 'Artist with id ' + genre_id + ' does not exist';
             }
         } catch (error) {
-            console.log('An error has occurred')
-            return error.headers
+            return 'An error occurred';
         }
     }
 }

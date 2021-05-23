@@ -30,10 +30,10 @@ export class TracksController implements interfaces.Controller {
         description: 'Get all tracks objects',
         parameters: {},
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Get all tracks',
     })
@@ -44,9 +44,9 @@ export class TracksController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.tracksService.getTracks());
+            return response.json(await this.tracksService.getTracks());
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 
@@ -60,10 +60,10 @@ export class TracksController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful',
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Post new track',
     })
@@ -76,10 +76,23 @@ export class TracksController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newTrack = new TrackModel();
-        await this.tracksService.addTrack(request.body);
-        response.json(request.body);
+        if (request.body.title && request.body.url && request.body.artist) {
+            try {
+                const newTrack = new TrackModel();
+                newTrack.title = request.body.title;
+                newTrack.url = request.body.url;
+                newTrack.artist = request.body.artist;
+                const message = await this.tracksService.addTrack(newTrack);
+                if (message === 'Track created correctly') {
+                    return response.json(newTrack);
+                } else {
+                    return 'An error occurred';
+                }
+            } catch (error) {
+                return response.status(500).end();
+            }
+        } else {
+            return response.status(400).end();
+        }
     }
 }
-
-

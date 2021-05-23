@@ -7,7 +7,7 @@ import { couch } from '../../index'
 @injectable()
 export class TracksService {
 
-    public async getTracks() {
+    async getTracks() {
         const mangoQuery = {
             selector: {
                 type: 'Track'
@@ -17,21 +17,20 @@ export class TracksService {
         try {
             const res = await couch.mango('cbd', mangoQuery, parameters).then((data: any) => {
                 const res = JSON.parse(JSON.stringify(data));
-                if (res) {
-                    const ret: TrackModel[] = res.data.docs as TrackModel[];
+                if (res?.data?.docs) {
+                    const ret: TrackModel[] = res?.data?.docs as TrackModel[];
                     return ret;
                 } else {
-                    console.log('There are not any tracks')
+                    return 'There are not any tracks';
                 }
             });
-            if (res) {
+            if (res.length !== 0) {
                 return res;
             } else {
-                console.log('There are not any tracks')
-            } 
+                return 'There are not any tracks';
+            }
         } catch (error) {
-            console.log('An error has ocurred')
-            return error.headers
+            return 'An error ocurred';
         }
     }
 
@@ -39,65 +38,66 @@ export class TracksService {
         try {
             const track: TrackModel = await couch.get("cbd", id).then(
                 (data: any) => {
-                    let obj: TrackModel = data.data;
+                    let obj: TrackModel = data?.data;
                     if (obj?.type === 'Track') {
                         return obj;
                     } else {
-                        console.log('Track with id ' + id + ' does not exist')
+                        return 'Track with id ' + id + ' does not exist';
                     }
                 }
             ).catch((error: Error) => {
-                console.log('Track with id ' + id + ' does not exist')
-                return error.message
+                return 'Track with id ' + id + ' does not exist';
             });
-            return track;
+            if (track) {
+                return track;
+            } else {
+                return 'Artist with id ' + id + ' does not exist';
+            }
         } catch (error) {
-            console.log('Track with id ' + id + ' does not exist')
-            return error
+            return error?.headers;
         }
     }
 
     async addTrack(track: TrackModel) {
         try {
-            await couch.insert("cbd", {
-                title: track.title,
-                url: track.url,
-                artist: track.artist,
+            const newTrack = await couch.insert("cbd", {
+                title: track?.title,
+                url: track?.url,
+                artist: track?.artist,
                 type: 'Track'
-            }).then(
-                (data: any) => {
-                    console.log('Track created correctly')
+            }).then((status: any) => {
+                if (status?.status === 201) {
+                    return 'Track created correctly';
                 }
-            ).catch(((error: Error) => {
-                return error.message
-            }));
+            });
+            return newTrack;
         } catch (error) {
-            console.log('An error has occurred')
-            console.log(error)
+            return 'An error occurred';
         }
     }
 
-    async updateTrack(id:string, track_updated: TrackModel){
+    async updateTrack(id: string, track_updated: TrackModel) {
         try {
             const track = await this.getTrackById(id);
             if (track && track?.type === 'Track') {
-                await couch.update('cbd', {
+                const updated= await couch.update('cbd', {
                     _id: id,
-                    _rev: track._rev,
-                    title: track_updated.title,
-                    url: track_updated.url,
-                    artist: track_updated.artist,
+                    _rev: track?._rev,
+                    title: track_updated?.title,
+                    url: track_updated?.url,
+                    artist: track_updated?.artist,
                     type: 'Track'
                 }).then((status: any) => {
                     if (status.status === 201) {
-                        console.log('Track created correctly')
+                        return 'Track updated correctly';
                     }
                 });
+                return updated;
             } else {
-                console.log('Track with id ' + id + ' does not exist')
+                return 'Track with id ' + id + ' does not exist';
             }
         } catch (error) {
-            console.log('An error has occurred')
+            return 'An error occurred';
         }
     }
 
@@ -105,16 +105,17 @@ export class TracksService {
         try {
             const track = await this.getTrackById(id);
             if (track && track?.type === 'Track') {
-                await couch.del('cbd', id, track._rev).then((status: any) => {
-                    if (status.status === 200) {
-                        console.log('Track deleted correctly')
+                const e= await couch.del('cbd', id, track?._rev).then((status: any) => {
+                    if (status?.status === 200) {
+                        return 'Track deleted correctly';
                     }
                 });
+                return track;
             } else {
-                console.log('Track with id ' + id + ' does not exist')
+                return 'Track with id ' + id + ' does not exist';
             }
         } catch (error) {
-            console.log(error)
+            return 'An error occurred';
         }
     }
 }

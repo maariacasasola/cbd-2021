@@ -30,10 +30,10 @@ export class GenresController implements interfaces.Controller {
         description: 'Get all genre objects',
         parameters: {},
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Get all genres',
     })
@@ -44,9 +44,9 @@ export class GenresController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.genresService.getGenres());
+            return response.json(await this.genresService.getGenres());
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 
@@ -60,10 +60,10 @@ export class GenresController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful',
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Post new genre',
     })
@@ -76,8 +76,22 @@ export class GenresController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newGenre = new GenreModel();
-        await this.genresService.addGenre(request.body);
-        response.json(request.body);
+        if (request.body.name && request.body.description) {
+            try {
+                const newGenre = new GenreModel();
+                newGenre.name = request.body.name;
+                newGenre.description = request.body.description;
+                const message = await this.genresService.addGenre(newGenre);
+                if (message === 'Genre created correctly') {
+                    return response.json(newGenre);
+                } else {
+                    return 'An error occurred';
+                }
+            } catch (error) {
+                return response.status(500).end();
+            }
+        } else {
+            return response.status(400).end();
+        }
     }
 }

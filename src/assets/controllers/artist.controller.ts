@@ -17,6 +17,7 @@ import {
 } from 'swagger-express-ts';
 import * as express from 'express';
 import { ArtistsService } from '../services/artists.service';
+import { ArtistModel } from '../models/artist.model';
 
 @ApiPath({
     name: 'Artists',
@@ -38,12 +39,12 @@ export class ArtistController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
-        summary: 'Get a artist by id'
+        summary: 'Get an artist by id'
     })
     @httpGet('/')
     public async getArtist(
@@ -53,9 +54,15 @@ export class ArtistController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.artistsService.getArtistById(id));
+            const message = await this.artistsService.getArtistById(id);
+            if (message === 'Artist with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'An error occurred') {
+                return 'An error occurred';
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 
@@ -75,10 +82,10 @@ export class ArtistController implements interfaces.Controller {
             }
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Update artist'
     })
@@ -87,13 +94,28 @@ export class ArtistController implements interfaces.Controller {
         request: express.Request,
         response: express.Response,
         next: express.NextFunction) {
-        try {
-            if (!request.body) {
-                return response.status(400).end();
+        if (!request.body) {
+            return response.status(400).end();
+        }
+        if (request.body.name && request.body.description && request.body.genres) {
+            try {
+                const newArtist = new ArtistModel();
+                newArtist.name = request.body.name;
+                newArtist.description = request.body.description;
+                newArtist.genres = request.body.genres;
+                const message = await this.artistsService.updateArtist(id, newArtist);
+                if (message === 'Artist updated correctly') {
+                    return response.json(newArtist);
+                } else if (message === 'Artist with id ' + id + ' does not exist') {
+                    return response.status(404).end();
+                } else {
+                    return 'An error occurred';
+                }
+            } catch (error) {
+                return response.status(500).end();
             }
-            response.json(await this.artistsService.updateArtist(id, request.body));
-        } catch (error) {
-            console.log(error);
+        } else {
+            return response.status(400).end();
         }
     }
 
@@ -108,10 +130,10 @@ export class ArtistController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Delete artist'
     })
@@ -123,9 +145,15 @@ export class ArtistController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.artistsService.deleteArtist(id));
+            const message = await this.artistsService.deleteArtist(id);
+            if (message === 'Artist with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'Artist deleted correctly') {
+                return response.json(message);
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 }

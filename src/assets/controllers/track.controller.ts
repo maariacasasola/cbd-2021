@@ -17,6 +17,7 @@ import {
 } from 'swagger-express-ts';
 import * as express from 'express';
 import { TracksService } from '../services/tracks.service';
+import { TrackModel } from '../models/track.model';
 
 @ApiPath({
     name: 'Tracks',
@@ -25,7 +26,7 @@ import { TracksService } from '../services/tracks.service';
 @controller('/tracks/:id')
 @injectable()
 export class TrackController implements interfaces.Controller {
-    constructor(@inject(TracksService.name) private tracksService: TracksService) {}
+    constructor(@inject(TracksService.name) private tracksService: TracksService) { }
 
     @ApiOperationGet({
         description: 'Get track object',
@@ -38,10 +39,10 @@ export class TrackController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {  description: 'Parameters fail' },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Get a track by id'
     })
@@ -53,9 +54,15 @@ export class TrackController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.tracksService.getTrackById(id));
+            const message = await this.tracksService.getTrackById(id);
+            if (message === 'Track with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'An error occurred') {
+                return 'An error occurred';
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 
@@ -75,10 +82,10 @@ export class TrackController implements interfaces.Controller {
             }
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Update track'
     })
@@ -87,13 +94,28 @@ export class TrackController implements interfaces.Controller {
         request: express.Request,
         response: express.Response,
         next: express.NextFunction) {
-        try {
-            if (!request.body) {
-                return response.status(400).end();
+        if (!request.body) {
+            return response.status(400).end();
+        }
+        if (request.body.title && request.body.url && request.body.artist) {
+            try {
+                const newTrack = new TrackModel();
+                newTrack.title = request.body.title;
+                newTrack.url = request.body.url;
+                newTrack.artist = request.body.artist;
+                const message = await this.tracksService.updateTrack(id, newTrack);
+                if (message === 'Track updated correctly') {
+                    return response.json(newTrack);
+                } else if (message === 'Track with id ' + id + ' does not exist') {
+                    return response.status(404).end();
+                } else {
+                    return 'An error occurred';
+                }
+            } catch (error) {
+                return response.status(500).end();
             }
-            response.json(await this.tracksService.updateTrack(id, request.body));
-        } catch (error) {
-            console.log(error);
+        } else {
+            return response.status(400).end();
         }
     }
 
@@ -108,10 +130,10 @@ export class TrackController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Delete track'
     })
@@ -123,9 +145,15 @@ export class TrackController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.tracksService.deleteTrack(id));
+            const message = await this.tracksService.deleteTrack(id);
+            if (message === 'Track with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'Track deleted correctly') {
+                return response.json(message);
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 }

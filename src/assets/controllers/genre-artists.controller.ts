@@ -24,7 +24,7 @@ export class GenreArtistsController implements interfaces.Controller {
     constructor(@inject(GenresService.name) private genresService: GenresService) { }
 
     @ApiOperationGet({
-        description: 'Get genre tracks objects',
+        description: 'Get genre artists objects',
         parameters: {
             path: {
                 id: {
@@ -34,11 +34,12 @@ export class GenreArtistsController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
+        summary: 'Get artists of genre'
     })
     @httpGet('/')
     public async getGenreArtists(
@@ -48,10 +49,16 @@ export class GenreArtistsController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.genresService.getGenreArtists(id));
+            const message = await this.genresService.getGenreArtists(id);
+            console.log(message)
+            if (message === 'Genre with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'An error occurred') {
+                return 'An error occurred';
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
-
 }

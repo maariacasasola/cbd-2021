@@ -5,15 +5,11 @@ import {
     controller,
     httpGet,
     requestParam,
-    httpPut,
-    httpDelete,
 } from 'inversify-express-utils';
 import {
     ApiPath,
     SwaggerDefinitionConstant,
     ApiOperationGet,
-    ApiOperationPut,
-    ApiOperationDelete,
 } from 'swagger-express-ts';
 import * as express from 'express';
 import { ArtistsService } from '../services/artists.service';
@@ -38,11 +34,12 @@ export class ArtistTracksController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful'
-            },
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
+        summary: 'Get tracks of artist'
     })
     @httpGet('/')
     public async getArtistTracks(
@@ -52,10 +49,15 @@ export class ArtistTracksController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.artistsService.getArtistTracks(id));
+            const message = await this.artistsService.getArtistTracks(id);
+            if (message === 'Artist with id ' + id + ' does not exist') {
+                return response.status(404).end();
+            } else if (message === 'An error occurred') {
+                return 'An error occurred';
+            }
+            return message;
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
-
 }

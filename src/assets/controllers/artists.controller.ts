@@ -30,10 +30,10 @@ export class ArtistsController implements interfaces.Controller {
         description: 'Get all artist objects',
         parameters: {},
         responses: {
-            200: {
-                description: 'Successful'
-            },
-            400: {},
+            500: { description: 'Internal server error' },
+            404: { description: 'Not found' },
+            400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Get all artists',
     })
@@ -44,9 +44,9 @@ export class ArtistsController implements interfaces.Controller {
         next: express.NextFunction
     ) {
         try {
-            response.json(await this.artistsService.getArtists());
+            return response.json(await this.artistsService.getArtists());
         } catch (error) {
-            console.log(error);
+            return response.status(500).end();
         }
     }
 
@@ -60,10 +60,9 @@ export class ArtistsController implements interfaces.Controller {
             },
         },
         responses: {
-            200: {
-                description: 'Successful',
-            },
+            500: { description: 'Internal server error' },
             400: { description: 'Parameters fail' },
+            200: { description: 'Successful' }
         },
         summary: 'Post new artist',
     })
@@ -76,8 +75,23 @@ export class ArtistsController implements interfaces.Controller {
         if (!request.body) {
             return response.status(400).end();
         }
-        const newArtist = new ArtistModel();
-        await this.artistsService.addArtist(request.body);
-        response.json(request.body);
+        if (request.body.name && request.body.description && request.body.genres) {
+            try {
+                const newArtist = new ArtistModel();
+                newArtist.name = request.body.name;
+                newArtist.description = request.body.description;
+                newArtist.genres = request.body.genres;
+                const message = await this.artistsService.addArtist(newArtist);
+                if (message === 'Artist created correctly') {
+                    return response.json(newArtist);
+                } else {
+                    return 'An error occurred';
+                }
+            } catch (error) {
+                return response.status(500).end();
+            }
+        } else {
+            return response.status(400).end();
+        }
     }
 }
